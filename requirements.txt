@@ -1,19 +1,25 @@
 # Required version of Python: 3.10.0
 
 # The main framework
-django-filter==25.2
 django==5.2.9
 djangorestframework==3.16.1
-markdown==3.10
 
 # System utilities and configuration
 python-dotenv==1.1.1
-web3==7.14.1 #  https://web3py.readthedocs.io/en/latest/quickstart.html#
-eth-account==0.13.7 #  https://eth-account.readthedocs.io/en/stable/
-langgraph==1.0.10 #  https://docs.langchain.com/oss/python/langgraph/quickstart
-git+https://github.com/IBM/LNN #  https://ibm.github.io/LNN/introduction.html
+requests==2.32.5
+celery==5.6.2
+redis==7.2.1
+pydantic==2.12.5
+web3==7.14.1
+git+https://github.com/IBM/LNN.git
+langgraph==1.0.10
+
+# Documentation
+#  https://web3py.readthedocs.io/en/latest/quickstart.html#
+#  https://docs.langchain.com/oss/python/langgraph/quickstart
+#  https://ibm.github.io/LNN/introduction.html
+#  https://github.com/karpathy/llm-council
 
 #  https://eips.ethereum.org/EIPS/eip-8004
 #  https://eips.ethereum.org/EIPS/eip-712
 #  https://docs.dex-trade.com/
-#  https://github.com/karpathy/llm-council
