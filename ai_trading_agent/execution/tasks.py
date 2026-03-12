@@ -1,6 +1,6 @@
 from celery import shared_task
-from ..execution.pipeline import ExecutionPipeline
-from ..monitoring.reputation import ReputationEngine
+from execution.pipeline import ExecutionPipeline
+from monitoring.reputation import ReputationEngine
 
 
 @shared_task(bind=True, max_retries=3)

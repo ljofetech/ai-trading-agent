@@ -1,4 +1,4 @@
-from lnn import Predicate, Proposition
+from lnn import Proposition, And, Implies
 
 
 def define_predicates():
@@ -19,6 +19,15 @@ def define_predicates():
         "RiskAcceptable": RiskAcceptable,
         "TradeAllowed": TradeAllowed,
     }
+
+
+def register_predicates(model, predicates):
+    """
+    Добавляем формулы в модель.
+    """
+
+    for predicate in predicates.values():
+        model.add_knowledge(predicate)
 
 
 def add_facts_from_plan(model, predicates, plan, market_data):
@@ -53,7 +62,9 @@ def add_logic_rules(model, predicates):
     TradeAllowed = predicates["TradeAllowed"]
 
     # Если ликвидность высокая И волатильность низкая И confidence приемлемый → сделка разрешена
-    rule = (LiquidityHigh & VolatilityLow & ConfidenceAcceptable) >> TradeAllowed
+    rule = Implies(
+        And(LiquidityHigh, VolatilityLow, ConfidenceAcceptable), TradeAllowed
+    )
 
     model.add_knowledge(rule)
 
@@ -65,8 +76,11 @@ def apply_rules(model, plan, market_data):
 
     predicates = define_predicates()
 
-    add_facts_from_plan(model, predicates, plan, market_data)
+    register_predicates(model, predicates)
+
     add_logic_rules(model, predicates)
+
+    add_facts_from_plan(model, predicates, plan, market_data)
 
     model.infer()
 

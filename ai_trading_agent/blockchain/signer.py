@@ -1,6 +1,6 @@
-from eth_account.messages import encode_structured_data
-from django.conf import settings
+from eth_account.messages import encode_defunct
 from .web3_client import Web3Client
+import json
 
 
 class EIP712Signer:
@@ -11,34 +11,13 @@ class EIP712Signer:
         client = Web3Client()
         account = client.get_account()
 
-        domain = {
-            "name": "AITradingAgent",
-            "version": "1",
-            "chainId": intent["chain_id"],
-            "verifyingContract": settings.REGISTRY_ADDRESS,
-        }
+        # Преобразуем intent в JSON-строку
+        message_text = json.dumps(intent, separators=(",", ":"), sort_keys=True)
 
-        types = {
-            "Intent": [
-                {"name": "user", "type": "address"},
-                {"name": "asset_in", "type": "address"},
-                {"name": "asset_out", "type": "address"},
-                {"name": "amount", "type": "uint256"},
-                {"name": "max_slippage", "type": "uint256"},
-                {"name": "deadline", "type": "uint256"},
-                {"name": "nonce", "type": "uint256"},
-            ]
-        }
+        # Кодируем сообщение для подписи
+        message = encode_defunct(text=message_text)
 
-        structured_data = {
-            "types": types,
-            "domain": domain,
-            "primaryType": "Intent",
-            "message": intent,
-        }
-
-        message = encode_structured_data(structured_data)
-
+        # Подписываем сообщение
         signed = account.sign_message(message)
 
         return signed.signature.hex()

@@ -1,6 +1,6 @@
-from ..blockchain.signer import EIP712Signer
-from ..blockchain.registry import ERC8004Registry
-from ..risk.router import RiskRouter
+from blockchain.signer import EIP712Signer
+from blockchain.registry import ERC8004Registry
+from risk.router import RiskRouter
 from .intents import IntentBuilder
 
 

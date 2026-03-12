@@ -1,7 +1,7 @@
-from ..ibmlnn.judge import LNNJudge
+from ibmlnn.judge import LNNJudge
 from .council import LLMCouncil
 from .schemas import TradePlan
-from ..core.dex import get_market_data
+from core.dex import get_market_data
 
 
 class LangGraphOrchestrator:
@@ -21,7 +21,7 @@ class LangGraphOrchestrator:
 
         plan = TradePlan(**council_output["execution"])
 
-        market_data = get_market_data(plan.asset_out)
+        market_data = get_market_data(plan.asset_in + plan.asset_out)
 
         validated_plan = LNNJudge.validate(plan, market_data)
 

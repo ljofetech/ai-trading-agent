@@ -1,5 +1,5 @@
-from ..llmcouncil.orchestrator import LangGraphOrchestrator
-from ..execution.tasks import execute_trade_task
+from llmcouncil.orchestrator import LangGraphOrchestrator
+from execution.tasks import execute_trade_task
 
 
 class ConversationService:
@@ -18,7 +18,7 @@ class ConversationService:
             "status": "plan_generated",
             "plan": plan_result["plan"],
             "market": plan_result["market"],
-            "reasoning": plan_result.get("council_reasoning"),
+            "reasoning": plan_result["council_reasoning"],
         }
 
     @staticmethod

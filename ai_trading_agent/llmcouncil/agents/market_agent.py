@@ -1,4 +1,4 @@
-import requests
+from core.dex import get_market_data
 
 
 class MarketAgent:
@@ -9,16 +9,19 @@ class MarketAgent:
         Анализирует рынок и возвращает структурированные метрики.
         """
 
-        user_input = state["user_input"]
+        user_input = state.get("user_input", "")
 
-        # 1. Извлечение токенов (в реальном проекте — LLM parsing)
-        asset_in = "USDC"
-        asset_out = "ETH"
+        assets = MarketAgent.parse_user_input(user_input)
+        asset_in = assets["asset_in"].upper()
+        asset_out = assets["asset_out"].upper()
 
-        # 2. Получение рыночных данных
-        price = MarketAgent.get_price(asset_out)
-        liquidity = MarketAgent.get_liquidity(asset_out)
-        volatility = MarketAgent.get_volatility(asset_out)
+        pair = f"{asset_in}{asset_out}"  # пример: BTCUSDT
+
+        ticker_data = get_market_data(pair)
+
+        price = float(ticker_data.get("price", 0))
+        liquidity = float(ticker_data.get("volatility", 0))
+        volatility = float(ticker_data.get("liquidity", 0))
 
         return {
             "asset_in": asset_in,
@@ -29,14 +32,13 @@ class MarketAgent:
         }
 
     @staticmethod
-    def get_price(symbol: str) -> float:
-        # заглушка
-        return 3200.0
-
-    @staticmethod
-    def get_liquidity(symbol: str) -> float:
-        return 15_000_000
-
-    @staticmethod
-    def get_volatility(symbol: str) -> float:
-        return 0.032
+    def parse_user_input(user_input: str) -> dict:
+        """
+        Простое извлечение валют из строки.
+        Можно заменить на LLM для сложных сообщений.
+        """
+        tokens = user_input.upper().split()
+        if len(tokens) >= 2:
+            return {"asset_in": tokens[0], "asset_out": tokens[1]}
+        # fallback
+        return {"asset_in": "BTC", "asset_out": "USDT"}
