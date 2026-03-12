@@ -1,32 +1,27 @@
+from llmcouncil.client import LLMClient
+
+
 class RiskAgent:
 
     @staticmethod
-    def evaluate(state: dict, market_data: dict) -> dict:
+    def evaluate(state, market_data):
 
-        volatility = market_data["volatility"]
-        liquidity = market_data["liquidity"]
+        analysis = LLMClient.generate_json(
+            f"""
+                Analyze trading risk.
 
-        risk_score = RiskAgent.compute_risk(volatility, liquidity)
-        confidence = RiskAgent.compute_confidence(risk_score)
+                Market data:
+                    {market_data}
 
-        return {
-            "risk_score": risk_score,
-            "confidence": confidence,
-            "risk_level": RiskAgent.classify(risk_score),
-        }
+                Return JSON:
 
-    @staticmethod
-    def compute_risk(volatility, liquidity):
-        return volatility * 100 - (liquidity / 1_000_000)
+                    {{
+                    "risk_score": number,
+                    "confidence": number,
+                    "risk_level": "low | medium | high",
+                    "reasoning": "text"
+                    }}
+            """
+        )
 
-    @staticmethod
-    def compute_confidence(risk_score):
-        return max(0.0, min(1.0, 1 - (risk_score / 100)))
-
-    @staticmethod
-    def classify(risk_score):
-        if risk_score < 20:
-            return "low"
-        elif risk_score < 50:
-            return "medium"
-        return "high"
+        return analysis

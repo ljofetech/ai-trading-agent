@@ -1,32 +1,34 @@
+from llmcouncil.client import LLMClient
+
+
 class ExecutionAgent:
 
     @staticmethod
-    def plan(state: dict, market_data: dict, risk_data: dict) -> dict:
+    def plan(state, market_data, risk_data):
 
-        asset_in = market_data["asset_in"]
-        asset_out = market_data["asset_out"]
+        response = LLMClient.generate_json(
+            f"""
+                Create trade execution plan.
 
-        amount = ExecutionAgent.extract_amount(state["user_input"])
-        slippage = ExecutionAgent.calculate_slippage(risk_data)
+                User message:
+                    {state["user_input"]}
 
-        return {
-            "asset_in": asset_in,
-            "asset_out": asset_out,
-            "amount": amount,
-            "max_slippage": slippage,
-            "reasoning": "Based on liquidity and volatility analysis",
-            "confidence": risk_data["confidence"],
-        }
+                Market data:
+                    {market_data}
 
-    @staticmethod
-    def extract_amount(text: str) -> float:
-        # в реальности — LLM extraction
-        return 1000.0
+                Risk data:
+                    {risk_data}
 
-    @staticmethod
-    def calculate_slippage(risk_data: dict) -> float:
-        if risk_data["risk_level"] == "low":
-            return 0.005
-        elif risk_data["risk_level"] == "medium":
-            return 0.01
-        return 0.02
+                Return JSON:
+                    {{
+                    "asset_in": "...",
+                    "asset_out": "...",
+                    "amount": number,
+                    "max_slippage": number,
+                    "confidence": number,
+                    "reasoning": "text"
+                    }}
+            """
+        )
+
+        return response

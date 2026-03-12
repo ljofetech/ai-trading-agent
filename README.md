@@ -27,7 +27,7 @@ Request body:
 ```json
 {
   "conversation_id": "uuid",
-  "message": "Buy ETH"
+  "message": "Swap 1500 USDT to ETH if volatility is acceptable"
 }
 ```
 
@@ -51,6 +51,12 @@ Request body:
 
 ```json
 https://api.dex-trade.com/v1/public/symbols
+```
+
+## OpenAI
+
+```json
+https://developers.openai.com/api/reference/overview
 ```
 
 ## Required file for project

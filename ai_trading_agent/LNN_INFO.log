@@ -1,0 +1,59 @@
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request to /chat/completions in 0.375753 seconds
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request to /chat/completions in 0.910379 seconds
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+ERROR:django.request:Internal Server Error: /api/chat/
+Traceback (most recent call last):
+  File "C:\Users\jofel\DVP\trading_agent\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jofel\DVP\trading_agent\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jofel\DVP\trading_agent\venv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jofel\DVP\trading_agent\venv\Lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jofel\DVP\trading_agent\venv\Lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jofel\DVP\trading_agent\venv\Lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\jofel\DVP\trading_agent\venv\Lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\jofel\DVP\trading_agent\venv\Lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jofel\DVP\trading_agent\ai_trading_agent\conversation\views.py", line 14, in post
+    result = ConversationService.process_message(conversation_id, message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jofel\DVP\trading_agent\ai_trading_agent\conversation\services.py", line 13, in process_message
+    plan_result = LangGraphOrchestrator.run(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jofel\DVP\trading_agent\ai_trading_agent\llmcouncil\orchestrator.py", line 17, in run
+    council_output = LLMCouncil.run(state)
+                     ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jofel\DVP\trading_agent\ai_trading_agent\llmcouncil\council.py", line 10, in run
+    analysis = MarketAgent.analyze(state)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jofel\DVP\trading_agent\ai_trading_agent\llmcouncil\agents\market_agent.py", line 12, in analyze
+    extraction = LLMClient.generate_json(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jofel\DVP\trading_agent\ai_trading_agent\llmcouncil\client.py", line 17, in generate_json
+    response = client.chat.completions.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jofel\DVP\trading_agent\venv\Lib\site-packages\openai\_utils\_utils.py", line 286, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jofel\DVP\trading_agent\venv\Lib\site-packages\openai\resources\chat\completions\completions.py", line 1211, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\jofel\DVP\trading_agent\venv\Lib\site-packages\openai\_base_client.py", line 1297, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jofel\DVP\trading_agent\venv\Lib\site-packages\openai\_base_client.py", line 1070, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.RateLimitError: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}

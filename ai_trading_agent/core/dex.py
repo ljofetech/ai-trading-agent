@@ -1,23 +1,30 @@
 import requests
 
+DEX_API_URL = "https://api.dex-trade.com/v1/public/ticker"
+
 
 def get_market_data(token):
 
     response = requests.get(
-        f"https://api.dex-trade.com/v1/public/ticker?pair={token}"
-    ).json()
+        DEX_API_URL,
+        params={"pair": token},
+        timeout=5,
+    )
 
-    data = response["data"]
+    response.raise_for_status()
+    payload = response.json()
 
-    price = float(data["last"])
-    high = float(data["high"])
-    low = float(data["low"])
-    volume = float(data["volume_24H"])
+    data = payload["data"]
+
+    price = float(data.get("last", 0))
+    high = float(data.get("high", 0))
+    low = float(data.get("low", 0))
+    volume = float(data.get("volume_24H", 0))
 
     result = {
-        "token": data["pair"],
+        "token": data.get("pair"),
         "price": price,
-        "volatility": (high - low) / price,
+        "volatility": (high - low) / price if price else 0,
         "liquidity": volume * price,
     }
 
