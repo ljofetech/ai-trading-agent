@@ -6,15 +6,14 @@ class RiskAgent:
     @staticmethod
     def evaluate(state, market_data):
 
-        analysis = LLMClient.generate_json(
+        analysis = LLMClient.generate(
             f"""
                 Analyze trading risk.
 
                 Market data:
                     {market_data}
 
-                Return JSON:
-
+                Return ONLY valid JSON:
                     {{
                     "risk_score": number,
                     "confidence": number,

@@ -51,12 +51,18 @@ Request body:
 
 ```json
 https://api.dex-trade.com/v1/public/symbols
+https://api.dex-trade.com/v1/public/ticker?pair=BTCUSD
 ```
 
 ## OpenAI
 
 ```json
 https://developers.openai.com/api/reference/overview
+
+and 
+
+https://gemini.google.com/
+https://github.com/googleapis/python-genai
 ```
 
 ## Required file for project

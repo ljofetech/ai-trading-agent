@@ -6,7 +6,7 @@ class ExecutionAgent:
     @staticmethod
     def plan(state, market_data, risk_data):
 
-        response = LLMClient.generate_json(
+        response = LLMClient.generate(
             f"""
                 Create trade execution plan.
 
@@ -19,7 +19,7 @@ class ExecutionAgent:
                 Risk data:
                     {risk_data}
 
-                Return JSON:
+                Return ONLY valid JSON:
                     {{
                     "asset_in": "...",
                     "asset_out": "...",

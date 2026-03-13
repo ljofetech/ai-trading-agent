@@ -9,14 +9,14 @@ class MarketAgent:
 
         user_input = state["user_input"]
 
-        extraction = LLMClient.generate_json(
+        extraction = LLMClient.generate(
             f"""
                 Extract trading pair from message.
 
                 Message:
                     {user_input}
 
-                Return JSON:
+                Return ONLY valid JSON:
                     {{
                     "asset_in": "...",
                     "asset_out": "..."

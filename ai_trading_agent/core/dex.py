@@ -1,13 +1,10 @@
 import requests
 
-DEX_API_URL = "https://api.dex-trade.com/v1/public/ticker"
-
 
 def get_market_data(token):
 
     response = requests.get(
-        DEX_API_URL,
-        params={"pair": token},
+        f"https://api.dex-trade.com/v1/public/ticker?pair={token}",
         timeout=5,
     )
 
