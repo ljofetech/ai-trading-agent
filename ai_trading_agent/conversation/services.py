@@ -18,7 +18,6 @@ class ConversationService:
             "status": "plan_generated",
             "plan": plan_result["plan"],
             "market": plan_result["market"],
-            "reasoning": plan_result["council_reasoning"],
         }
 
     @staticmethod

@@ -28,5 +28,4 @@ class LangGraphOrchestrator:
         return {
             "plan": validated_plan.dict(),
             "market": market_data,
-            "council_reasoning": council_output.get("reasoning"),
         }

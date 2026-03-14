@@ -27,7 +27,7 @@ Request body:
 ```json
 {
   "conversation_id": "uuid",
-  "message": "Swap 1500 USDT to ETH if volatility is acceptable"
+  "message": "Swap 0.00009 BTC to USDT if volatility is acceptable"
 }
 ```
 
@@ -51,16 +51,12 @@ Request body:
 
 ```json
 https://api.dex-trade.com/v1/public/symbols
-https://api.dex-trade.com/v1/public/ticker?pair=BTCUSD
+https://api.dex-trade.com/v1/public/ticker?pair=BTCUSDT
 ```
 
-## OpenAI
+## AI packages
 
 ```json
-https://developers.openai.com/api/reference/overview
-
-and 
-
 https://gemini.google.com/
 https://github.com/googleapis/python-genai
 ```
@@ -73,6 +69,7 @@ https://github.com/googleapis/python-genai
 SECRET_KEY = ""
 DEBUG = 1
 ALLOWED_HOSTS = "localhost 127.0.0.1"
+GEMINI_API_KEY = ""
 ```
 
 ## Requirments
