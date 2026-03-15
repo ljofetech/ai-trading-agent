@@ -1,9 +1,10 @@
-# from celery import shared_task
+from celery import shared_task
+
 from execution.pipeline import ExecutionPipeline
 from monitoring.reputation import ReputationEngine
 
 
-# @shared_task(bind=True, max_retries=3)
+@shared_task(bind=True, max_retries=3)
 def execute_trade_task(self, plan_data, user_address, chain_id):
     """
     Асинхронное исполнение сделки.

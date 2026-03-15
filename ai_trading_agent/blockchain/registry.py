@@ -15,15 +15,18 @@ class ERC8004Registry:
             abi=settings.REGISTRY_ABI,
         )
 
+        nonce = client.get_nonce(account.address)
+
         tx = contract.functions.submitIntent(intent, signature).build_transaction(
             {
                 "from": account.address,
-                "nonce": client.get_nonce(account.address),
+                "nonce": nonce,
                 "chainId": client.chain_id,
-                "gas": 500000,
                 "gasPrice": client.w3.eth.gas_price,
             }
         )
+
+        tx["gas"] = client.w3.eth.estimate_gas(tx)
 
         signed_tx = account.sign_transaction(tx)
 

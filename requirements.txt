@@ -5,8 +5,8 @@ django==5.2.9
 djangorestframework==3.16.1
 
 # System utilities and configuration
-# celery==5.6.2
-# redis==7.2.1
+celery==5.6.2
+redis==7.2.1
 python-dotenv==1.1.1
 requests==2.32.5
 pydantic==2.12.5
