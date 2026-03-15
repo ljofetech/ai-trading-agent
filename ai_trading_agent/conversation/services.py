@@ -5,7 +5,7 @@ from execution.tasks import execute_trade_task
 class ConversationService:
 
     @staticmethod
-    def process_message(conversation_id, message):
+    def process_message(conversation_id: str, message: str):
         """
         Обрабатывает сообщение пользователя и возвращает торговый план.
         """
@@ -15,7 +15,6 @@ class ConversationService:
         )
 
         return {
-            "status": "plan_generated",
             "plan": plan_result["plan"],
             "market": plan_result["market"],
         }

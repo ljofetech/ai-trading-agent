@@ -11,7 +11,7 @@ class MarketAgent:
 
         extraction = LLMClient.generate(
             f"""
-                Extract trading pair from message.
+                1. Extract trading pair from message.
 
                 Message:
                     {user_input}

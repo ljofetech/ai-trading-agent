@@ -6,9 +6,9 @@ from .agents.execution_agent import ExecutionAgent
 class LLMCouncil:
 
     @staticmethod
-    def run(state):
+    def run(state: dict):
         analysis = MarketAgent.analyze(state)
-        risk = RiskAgent.evaluate(state, analysis)
+        risk = RiskAgent.evaluate(analysis)
         execution = ExecutionAgent.plan(state, analysis, risk)
 
         return {

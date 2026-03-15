@@ -4,11 +4,12 @@ from llmcouncil.client import LLMClient
 class ExecutionAgent:
 
     @staticmethod
-    def plan(state, market_data, risk_data):
+    def plan(state: dict, market_data: dict, risk_data: dict):
 
         response = LLMClient.generate(
             f"""
-                Create trade execution plan.
+                1. Create trade execution plan.
+                2. And in "reasoning", speak easily and clearly.
 
                 User message:
                     {state["user_input"]}
