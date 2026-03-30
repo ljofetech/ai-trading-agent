@@ -1,5 +1,5 @@
 from llmcouncil.client import LLMClient
-from core.dex import get_market_data
+from llmcouncil.dex import get_market_data
 
 
 class MarketAgent:

@@ -48,12 +48,9 @@ INSTALLED_APPS = [
     # Apps ↓
     "blockchain",
     "conversation",
-    "core",
-    "execution",
     "ibmlnn",
     "llmcouncil",
     "monitoring",
-    "risk",
 ]
 
 MIDDLEWARE = [
@@ -150,3 +147,7 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "-",
     "VERSION": "1.0.0",
 }
+
+PRIVATE_KEY = os.getenv("PRIVATE_KEY")
+RPC_URL = os.getenv("RPC_URL")
+CONTRACT_ADDRESS = os.getenv("CONTRACT_ADDRESS")

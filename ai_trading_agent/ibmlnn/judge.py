@@ -1,4 +1,5 @@
 from lnn import Model
+
 from .rules import apply_rules
 
 

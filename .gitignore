@@ -9,3 +9,7 @@ LNN_INFO*
 /documents
 venv
 .env
+
+/abi.json
+/test.py
+/test2.py

@@ -1,5 +1,4 @@
 from .models import TradeExecutionRecord, AgentReputation
-from django.db.models import Count, Q
 
 
 class ReputationEngine:

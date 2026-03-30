@@ -1,5 +1,4 @@
 from llmcouncil.orchestrator import LangGraphOrchestrator
-from execution.tasks import execute_trade_task
 
 
 class ConversationService:
@@ -18,15 +17,3 @@ class ConversationService:
             "plan": plan_result["plan"],
             "market": plan_result["market"],
         }
-
-    @staticmethod
-    def approve_trade(plan, user_address, chain_id):
-        """
-        Запускает асинхронное исполнение сделки.
-        """
-
-        task = execute_trade_task.delay(
-            plan_data=plan, user_address=user_address, chain_id=chain_id
-        )
-
-        return {"status": "execution_started", "task_id": task.id}

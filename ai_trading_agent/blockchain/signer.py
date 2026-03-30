@@ -1,45 +1,32 @@
-import json
-from eth_account.messages import encode_defunct
-from .web3_client import Web3Client
+from eth_account.messages import encode_typed_data
+from .web3_client import account
 
 
-class IntentSigner:
+class EIP712SigningError(Exception):
+    """Error sign EIP-712"""
 
-    @staticmethod
-    def sign(intent: dict) -> str:
-        """
-        Подписывает intent.
-        """
+    pass
 
-        client = Web3Client()
-        account = client.get_account()
 
-        message_text = json.dumps(
-            intent,
-            separators=(",", ":"),
-            sort_keys=True,
-        )
+def sign_trade(eip712_data: dict) -> str:
+    try:
+        # 1. Валидация структуры
+        required_fields = ["types", "domain", "primaryType", "message"]
+        for field in required_fields:
+            if field not in eip712_data:
+                raise EIP712SigningError(f"Missing field: {field}")
 
-        message = encode_defunct(text=message_text)
+        # 2. Кодирование EIP-712
+        message = encode_typed_data(full_message=eip712_data)
 
-        signed = account.sign_message(message)
+        # 3. Подпись
+        signed_message = account.sign_message(message)
 
-        return signed.signature.hex()
+        # 4. Возврат hex-подписи
+        return signed_message.signature.hex()
 
-    @staticmethod
-    def recover(intent: dict, signature: str):
-        """
-        Проверка подписи.
-        """
+    except ValueError as e:
+        raise EIP712SigningError(f"Encoding error: {str(e)}")
 
-        from eth_account import Account
-
-        message_text = json.dumps(
-            intent,
-            separators=(",", ":"),
-            sort_keys=True,
-        )
-
-        message = encode_defunct(text=message_text)
-
-        return Account.recover_message(message, signature=signature)
+    except Exception as e:
+        raise EIP712SigningError(f"Unexpected signing error: {str(e)}")
