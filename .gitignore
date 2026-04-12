@@ -4,12 +4,6 @@ __pycache__
 # migrations
 *_initial.py
 db.sqlite3
-LNN_INFO*
 
-/documents
 venv
 .env
-
-/abi.json
-/test.py
-/test2.py

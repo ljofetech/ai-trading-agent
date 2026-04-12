@@ -24,14 +24,6 @@ from drf_spectacular.views import SpectacularRedocView
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("conversation.urls")),
-    path("api/", include("blockchain.urls")),
-    path(
-        "api-auth/",
-        include(
-            "rest_framework.urls",
-            namespace="rest_framework",
-        ),
-    ),
     path(
         "api/schema/",
         SpectacularAPIView.as_view(),

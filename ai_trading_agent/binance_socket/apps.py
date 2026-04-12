@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class BlockchainConfig(AppConfig):
+class BinanceSocketConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'blockchain'
+    name = 'binance_socket'

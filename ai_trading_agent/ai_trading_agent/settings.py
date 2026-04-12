@@ -46,11 +46,9 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_spectacular",
     # Apps ↓
-    "blockchain",
+    "binance_socket",
     "conversation",
-    "ibmlnn",
     "llmcouncil",
-    "monitoring",
 ]
 
 MIDDLEWARE = [
@@ -143,11 +141,7 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "AI Trading Agent API",
+    "TITLE": "-",
     "DESCRIPTION": "-",
     "VERSION": "1.0.0",
 }
-
-PRIVATE_KEY = os.getenv("PRIVATE_KEY")
-RPC_URL = os.getenv("RPC_URL")
-CONTRACT_ADDRESS = os.getenv("CONTRACT_ADDRESS")
