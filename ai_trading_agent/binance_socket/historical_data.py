@@ -15,7 +15,7 @@ BINANCE_API_SECRET = os.getenv("BINANCE_API_SECRET")
 async def get_historical_klines_range(
     symbol: str, interval: str, start_date: str, end_date: str
 ):
-    binance = BinanceAPI(BINANCE_API_KEY, BINANCE_API_SECRET, testnet=True)
+    binance = BinanceAPI(BINANCE_API_KEY, BINANCE_API_SECRET, testnet=False)
     await binance.connect()
 
     try:
@@ -32,9 +32,9 @@ async def get_historical_klines_range(
 
 async def main():
     symbol = "BTCUSDT"
-    interval = "1d"
-    start_date = "1 Jan 2026"
-    end_date = "12 Apr 2026"
+    interval = "15m"
+    start_date = "1d ago UTC"
+    end_date = "now UTC"
 
     try:
         klines = await get_historical_klines_range(
@@ -47,7 +47,7 @@ async def main():
         print(
             f"\nRetrieved {len(klines)} klines for period from {start_date} to {end_date}.\n"
         )
-        for k in klines[:140]:
+        for k in klines:
             print(
                 f"Time: {datetime.fromtimestamp(k[0]/1000)}, O: {k[1]}, H: {k[2]}, L: {k[3]}, C: {k[4]}, V: {k[5]}"
             )
