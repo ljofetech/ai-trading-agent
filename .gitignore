@@ -1,7 +1,6 @@
 .vscode
 
 __pycache__
-# migrations
 *_initial.py
 db.sqlite3
 

@@ -43,15 +43,20 @@ GEMINI_API_KEY = string
 \trading_agent> pip install -r .\requirements.txt
 ```
 
+### API KEY
+
 <https://www.binance.com/en/support/faq/detail/360002502072>
 
-<https://github.com/sammchardy/python-binance/tree/master/examples>
-
-<https://sammchardy.github.io/async-binance-basics/>
-
-<https://python-binance.readthedocs.io/en/latest/overview.html#async-api-calls>
+### API PACKAGE
 
 <https://python-binance.readthedocs.io/en/latest/>
+<https://sammchardy.github.io/async-binance-basics/>
+<https://github.com/sammchardy/python-binance/tree/master/examples>
+
+<https://www.pandas-ta.dev/getting-started/installation/>
+<https://www.pandas-ta.dev/api/>
+
+### PROJECT INFO
 
 <https://docs.google.com/document/d/1gX6cKdLb4sdMJgOvAT85z0pJ4ZbtNm_yZyx9FnvUpsM/edit?usp=sharing>
 

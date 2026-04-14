@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "binance_socket",
     "conversation",
     "llmcouncil",
+    "pandas_ta_socket",
 ]
 
 MIDDLEWARE = [
