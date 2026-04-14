@@ -50,10 +50,14 @@ GEMINI_API_KEY = string
 ### API PACKAGE
 
 <https://python-binance.readthedocs.io/en/latest/>
+
 <https://sammchardy.github.io/async-binance-basics/>
+
 <https://github.com/sammchardy/python-binance/tree/master/examples>
 
+
 <https://www.pandas-ta.dev/getting-started/installation/>
+
 <https://www.pandas-ta.dev/api/>
 
 ### PROJECT INFO
