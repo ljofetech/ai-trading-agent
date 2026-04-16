@@ -1,7 +1,18 @@
+import os
 import pandas as pd
 import ccxt
 import pandas_ta as ta
+
 from datetime import datetime
+from tzlocal import get_localzone
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+BINANCE_API_KEY = os.getenv("BINANCE_API_KEY")
+BINANCE_API_SECRET = os.getenv("BINANCE_API_SECRET")
 
 
 class CryptoAnalyzer:
@@ -10,24 +21,41 @@ class CryptoAnalyzer:
     """
 
     def __init__(
-        self, symbol: str, start_date: str, end_date: str, indicators: list = None
+        self,
+        symbol: str,
+        start_date: str,
+        end_date: str,
+        timeframe: str,
+        indicators: list,
     ):
         self.symbol = symbol
         self.start_date = start_date
         self.end_date = end_date
-        self.indicators = indicators if indicators else []
+        self.timeframe = timeframe
+        self.indicators = indicators if indicators else ["rsi", "bbands", "ema"]
         self.data = None
-        self.exchange = ccxt.binance()
+        self.exchange = ccxt.binanceusdm(
+            {
+                "apiKey": BINANCE_API_KEY,
+                "secret": BINANCE_API_SECRET,
+                "enableRateLimit": True,
+                "testnet": False,
+                "options": {
+                    "fetchCurrencies": False,
+                },
+            }
+        )
         self.added_indicators_info = []
 
     def _fetch_data(self) -> pd.DataFrame:
+        self.exchange.load_markets()
         since = self.exchange.parse8601(f"{self.start_date}T00:00:00Z")
         end_timestamp = self.exchange.parse8601(f"{self.end_date}T23:59:59Z")
         all_ohlcv = []
 
         while since < end_timestamp:
             ohlcv = self.exchange.fetch_ohlcv(
-                symbol=self.symbol, timeframe="15m", since=since, limit=1000
+                symbol=self.symbol, timeframe=self.timeframe, since=since, limit=1000
             )
             if not ohlcv:
                 break
@@ -37,7 +65,7 @@ class CryptoAnalyzer:
         df = pd.DataFrame(
             all_ohlcv, columns=["timestamp", "open", "high", "low", "close", "volume"]
         )
-        df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms")
+        df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms", utc=True)
         df.set_index("timestamp", inplace=True)
         mask = (df.index >= self.start_date) & (df.index <= self.end_date)
         return df.loc[mask].copy()
@@ -75,7 +103,7 @@ class CryptoAnalyzer:
 
     def load_data(self) -> pd.DataFrame:
         print(
-            f"📥 Loading data for {self.symbol} from {self.start_date} to {self.end_date}..."
+            f"📥 Loading data for {self.symbol} from {self.start_date} to {self.end_date} and timeframe {self.timeframe}..."
         )
         self.data = self._fetch_data()
         if self.data.empty:
@@ -86,23 +114,27 @@ class CryptoAnalyzer:
         self._add_indicators()
         return self.data
 
-    def get_data(self) -> pd.DataFrame:
+    def get_data(self, local_time: bool = False) -> pd.DataFrame:
         if self.data is None:
             self.load_data()
-        return self.data
+        df = self.data.copy()
+        if local_time:
+            df.index = df.index.tz_convert(get_localzone())
+        return df
 
 
 if __name__ == "__main__":
     # Create analyzer
     analyzer = CryptoAnalyzer(
-        symbol="BTC/USDT",
-        start_date="2026-04-13",
-        end_date="2026-04-14",
+        symbol="BTCUSDT",
+        start_date="2026-04-15",
+        end_date="2026-04-17",
+        timeframe="15m",
         indicators=["rsi", "bbands", "ema"],
     )
 
     # Get enriched DataFrame
-    df = analyzer.get_data()
+    df = analyzer.get_data(local_time=True)
 
     # Display columns to confirm presence of indicators
     print("\n📊 DataFrame columns:")

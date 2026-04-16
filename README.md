@@ -55,7 +55,6 @@ GEMINI_API_KEY = string
 
 <https://github.com/sammchardy/python-binance/tree/master/examples>
 
-
 <https://www.pandas-ta.dev/getting-started/installation/>
 
 <https://www.pandas-ta.dev/api/>
