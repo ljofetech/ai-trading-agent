@@ -6,11 +6,6 @@ class SupervisorAgent:
     def validate_and_coordinate(
         state: dict, market_data: dict, risk_data: dict, execution_plan: dict
     ):
-        """
-        ИИ-супервайзер проверяет согласованность всех решений
-        и может скорректировать план, если нужно.
-        """
-
         validation = LLMClient.generate(
             f"""
                 You are a supervisor AI for Trend Following + ATR strategy.

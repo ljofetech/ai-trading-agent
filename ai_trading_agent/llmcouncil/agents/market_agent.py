@@ -7,24 +7,24 @@ class MarketAgent:
     def analyze(state: dict):
         user_input = state["user_input"]
 
-        # Извлекаем торговую пару через ИИ
         extraction = LLMClient.generate(
             f"""
-                Extract trading pair from message.
+                Extract trading pair and timeframe from message.
 
                 Message: {user_input}
 
                 Return ONLY valid JSON:
                     {{
                     "asset_in": "...",
-                    "asset_out": "..."
+                    "asset_out": "...",
+                    "timeframe": "...",
                     }}
             """
         )
 
         asset_in = extraction["asset_in"]
         asset_out = extraction["asset_out"]
-        timeframe = 1440
+        timeframe = extraction["timeframe"]
 
         pair = f"{asset_in}{asset_out}"
 

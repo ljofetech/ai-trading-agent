@@ -127,8 +127,8 @@ if __name__ == "__main__":
     # Create analyzer
     analyzer = CryptoAnalyzer(
         symbol="BTCUSDT",
-        start_date="2026-04-15",
-        end_date="2026-04-17",
+        start_date="2026-04-19",
+        end_date="2026-04-20",
         timeframe="15m",
         indicators=["rsi", "bbands", "ema"],
     )
