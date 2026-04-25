@@ -1,4 +1,9 @@
+from datetime import datetime, timedelta
+
 from llmcouncil.client import LLMClient
+from binance_socket.current_data import get_current_futures_candle
+from binance_socket.historical_data import get_historical_klines_range
+from pandas_ta_socket.client import CryptoAnalyzer
 
 
 class MarketAgent:
@@ -9,94 +14,63 @@ class MarketAgent:
 
         extraction = LLMClient.generate(
             f"""
-                Extract trading pair and timeframe from message.
+            Extract trading pair, timeframe, start_date, and end_date from the message.
+            - trading pair: asset_in and asset_out (e.g., BTC, USD)
+            - timeframe: time like 1s, 15m, 1h, 4h, 1d, etc.
+            - start_date, end_date: dates if present.
 
-                Message: {user_input}
+            Message: {user_input}
 
-                Return ONLY valid JSON:
-                    {{
-                    "asset_in": "...",
-                    "asset_out": "...",
-                    "timeframe": "...",
-                    }}
+            Return ONLY valid JSON:
+            {{
+                "asset_in": "...",
+                "asset_out": "...",
+                "timeframe": "...",
+                "start_date": "...",
+                "end_date": "..."
+            }}
             """
         )
 
-        asset_in = extraction["asset_in"]
-        asset_out = extraction["asset_out"]
-        timeframe = extraction["timeframe"]
+        today = datetime.now().date()
+        tomorrow = today + timedelta(days=1)
 
-        pair = f"{asset_in}{asset_out}"
+        asset_in = extraction.get("asset_in") or "BTC"
+        asset_out = extraction.get("asset_out") or "USDT"
+        timeframe = extraction.get("timeframe") or "15m"
+        start_date = extraction.get("start_date") or today.isoformat()
+        end_date = extraction.get("end_date") or tomorrow.isoformat()
 
-        # Собираем сырые данные с Kraken
-        ticker_data = 0
-        historical_data = 0
+        symbol = asset_in + asset_out
 
-        # Передаем сырые данные ИИ для полного анализа
+        current_candle = get_current_futures_candle(
+            symbol,
+            timeframe,
+        )
+        history = get_historical_klines_range(
+            symbol,
+            timeframe,
+            start_date,
+            end_date,
+        )
+        analyzer = CryptoAnalyzer(
+            symbol=symbol,
+            start_date=start_date,
+            end_date=end_date,
+            timeframe=timeframe,
+            indicators=["rsi", "bbands", "ema"],
+        )
+        df = analyzer.get_data(local_time=True)
+
+        # Convert DataFrame to a NumPy array
+        #data_array = df.to_numpy()  # or df.values (older pandas versions)
+
+        # Or convert to a Python list of lists
+        data_list = df.values.tolist()
+
         analysis = LLMClient.generate(
             f"""
-                You are a quantitative crypto analyst using Trend Following + ATR strategy.
-
-                Analyze this raw market data and calculate ALL technical indicators.
-
-                CURRENT MARKET DATA:
-                - Price: {ticker_data.get('price', 0)}
-                - Liquidity: {ticker_data.get('liquidity', 0)}
-                - 24h Volume: {ticker_data.get('volume_24h', 0)}
-                
-                HISTORICAL PRICE DATA (last 100 candles, {timeframe} minute timeframe):
-                {historical_data}
-
-                Calculate the following using ONLY this data:
-                1. ATR (Average True Range) for periods 7, 14, 21
-                2. ATR percentage relative to current price
-                3. SMA (Simple Moving Average): 10, 30, 50 periods
-                4. EMA (Exponential Moving Average): 12, 26 periods
-                5. Trend direction (bullish/bearish/neutral) with confidence score
-                6. Trend strength (0-100)
-                7. Volatility regime (low/medium/high/extreme)
-                8. Support and resistance levels (nearest 3 each)
-                9. Current price position relative to moving averages
-
-                Return ONLY valid JSON with your calculations:
-                {{
-                    "asset_in": "{asset_in}",
-                    "asset_out": "{asset_out}",
-                    "timeframe": "{timeframe}",
-                    "current_price": {ticker_data.get('price', 0)},
-                    "liquidity": {ticker_data.get('liquidity', 0)},
-                    "atr": {{
-                        "period_7": number,
-                        "period_14": number,
-                        "period_21": number
-                    }},
-                    "atr_percent": number,
-                    "sma": {{
-                        "sma_10": number,
-                        "sma_30": number,
-                        "sma_50": number
-                    }},
-                    "ema": {{
-                        "ema_12": number,
-                        "ema_26": number
-                    }},
-                    "trend": {{
-                        "direction": "bullish | bearish | neutral",
-                        "confidence": number,
-                        "strength": number,
-                        "reasoning": "text"
-                    }},
-                    "volatility_regime": "low | medium | high | extreme",
-                    "support_levels": [number, number, number],
-                    "resistance_levels": [number, number, number],
-                    "price_vs_ma": {{
-                        "above_sma_10": boolean,
-                        "above_sma_30": boolean,
-                        "above_sma_50": boolean,
-                        "distance_from_sma_30_percent": number
-                    }}
-                }}
             """
         )
 
-        return analysis
+        return {current_candle, history, data_list}

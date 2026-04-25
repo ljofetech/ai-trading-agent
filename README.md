@@ -43,6 +43,13 @@ GEMINI_API_KEY = string
 \trading_agent> pip install -r .\requirements.txt
 ```
 
+```json
+{
+"conversation_id": "0",
+"message": "I want to trade BTC for USDT using a 15m timeframe, starting from 2026-04-22 and ending at 2026-04-23"
+}
+```
+
 ### API KEY
 
 <https://www.binance.com/en/support/faq/detail/360002502072>

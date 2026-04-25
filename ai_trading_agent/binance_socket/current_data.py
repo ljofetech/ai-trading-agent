@@ -4,48 +4,85 @@ import asyncio
 from datetime import datetime
 from dotenv import load_dotenv
 
+# Load environment variables from .env file (API keys)
 load_dotenv()
 
-from client import BinanceAPI
+from binance_socket.client import BinanceAPI
 
+# Retrieve Binance API credentials from environment variables
 BINANCE_API_KEY = os.getenv("BINANCE_API_KEY")
 BINANCE_API_SECRET = os.getenv("BINANCE_API_SECRET")
 
 
-async def stream_futures_candle(symbol: str, interval: str):
+async def get_current_futures_candle(symbol: str, interval: str):
+    """
+    Fetch the latest (current, incomplete) futures candlestick via REST API.
+    The output format is identical to the WebSocket version to ensure compatibility.
+    """
+    # Initialize the Binance API client (live futures, not testnet)
     binance = BinanceAPI(BINANCE_API_KEY, BINANCE_API_SECRET, testnet=False)
+    # Establish the connection to the Binance REST API
     await binance.connect()
 
     try:
-        stream_name = f"{symbol.lower()}@kline_{interval}"
+        # Request only the most recent kline (limit=1). This returns the
+        # candle that is currently forming (not yet closed).
+        klines = await binance.client.futures_klines(
+            symbol=symbol, interval=interval, limit=1  # Only fetch the latest candle
+        )
 
-        socket = binance.socket_manager.futures_multiplex_socket([stream_name])
+        # The REST response for futures klines is a list of lists:
+        # [
+        #   [
+        #     0: open_time (ms),
+        #     1: open price,
+        #     2: high price,
+        #     3: low price,
+        #     4: close price (current last price),
+        #     5: volume,
+        #     6: close_time (ms),
+        #     7: quote asset volume,
+        #     8: number of trades,
+        #     9: taker buy base volume,
+        #     10: taker buy quote volume,
+        #     11: ignore
+        #   ]
+        # ]
+        k = klines[0]  # Extract the single (latest) candle
 
-        async with socket as stream:
-            while True:
-                msg = await stream.recv()
+        # Build a dictionary with the same structure as the original WebSocket output
+        candle = {
+            # Convert open_time from milliseconds to a datetime object
+            "open_time": datetime.fromtimestamp(
+                k[0] / 1000
+            ),  # equivalent to kline["t"]
+            "open": float(k[1]),  # kline["o"]
+            "high": float(k[2]),  # kline["h"]
+            "low": float(k[3]),  # kline["l"]
+            "close": float(k[4]),  # kline["c"] (current price)
+            "volume": float(k[5]),  # kline["v"]
+            # Convert close_time from milliseconds to a datetime object
+            "close_time": datetime.fromtimestamp(
+                k[6] / 1000
+            ),  # equivalent to kline["T"]
+            # Because we fetched the current (open) candle, "closed" is always False
+            "closed": False,  # equivalent to kline["x"] = False
+        }
 
-                kline = msg["data"]["k"]
+        # Print the formatted candle data
+        print(candle)
 
-                candle = {
-                    "open_time": datetime.fromtimestamp(kline["t"] / 1000),
-                    "open": float(kline["o"]),
-                    "high": float(kline["h"]),
-                    "low": float(kline["l"]),
-                    "close": float(kline["c"]),
-                    "volume": float(kline["v"]),
-                    "close_time": datetime.fromtimestamp(kline["T"] / 1000),
-                    "closed": kline["x"],
-                }
-
-                print(candle)
+        return candle
 
     except Exception as e:
-        print(f"WebSocket error: {e}")
+        # Handle any REST API errors (e.g., network issues, invalid symbol)
+        print(f"REST API error: {e}")
 
     finally:
+        # Always close the Binance client connection to clean up resources
         await binance.disconnect()
 
 
-if __name__ == "__main__":
-    asyncio.run(stream_futures_candle("BTCUSDT", "15m"))
+# if __name__ == "__main__":
+#     # Execute the async function: fetch current 15-minute candle for BTCUSDT futures
+#     asyncio.run(get_current_futures_candle("BTCUSDT", "15m"))
