@@ -66,6 +66,12 @@ GEMINI_API_KEY = string
 
 <https://www.pandas-ta.dev/api/>
 
+<https://github.com/raydez/kronos-ai/blob/main/backend/>
+
+<https://github.com/thzll2001/Kronos-ai>
+
+<https://github.com/shiyu-coder/Kronos>
+
 ### PROJECT INFO
 
 <https://docs.google.com/document/d/1gX6cKdLb4sdMJgOvAT85z0pJ4ZbtNm_yZyx9FnvUpsM/edit?usp=sharing>
