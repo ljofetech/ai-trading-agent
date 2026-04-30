@@ -9,17 +9,25 @@
 // for the project's functionality and may include sensitive information like API keys.
 \trading_agent\.env
 
+// You can run this code from the 'trading_agent' directory using: py secret_key.py
+// This will generate a secure Django SECRET_KEY for use in your project settings.
+
 // The lines `SECRET_KEY = string`, `DEBUG = int`, and `ALLOWED_HOSTS = string` are configuration
 // settings in a `.env` file for a project. Here's what each of these settings typically represents:
 SECRET_KEY = string
 DEBUG = int
 ALLOWED_HOSTS = string
 
-// `GEMINI_API_KEY = string` is a configuration setting in the `.env` file for the project. This
-// setting typically represents the API key required for accessing the Gemini API. The value assigned
-// to `GEMINI_API_KEY` should be the actual API key provided by Gemini for authentication and
+// `AI_API_KEY = string` is a configuration setting in the `.env` file for the project. This
+// setting typically represents the API key required for accessing the AI API. The value assigned
+// to `AI_API_KEY` should be the actual API key provided by AI for authentication and
 // authorization purposes when interacting with their API services.
-GEMINI_API_KEY = string
+AI_API_KEY = string
+
+// The lines `BINANCE_API_KEY = string` and `BINANCE_API_SECRET = string` are configuration settings in
+// a `.env` file for a project that involve storing sensitive information related to the Binance API.
+BINANCE_API_KEY = string
+BINANCE_API_SECRET = string
 ```
 
 ## Requirments
@@ -41,7 +49,15 @@ GEMINI_API_KEY = string
 // the specified requirements file. This command ensures that all the necessary Python packages and
 // libraries are installed in the virtual environment to run the project successfully.
 \trading_agent> pip install -r .\requirements.txt
+
+// The list of packages is related to the dependencies being installed for a project. When
+// you run the command `pip install -r .\requirements.txt`, it reads the `requirements.txt` file which
+// contains a list of all the Python packages and libraries required for the project to function
+// properly.
+Installing collected packages: pytz, mpmath, zstandard, xxhash, websockets, wcwidth, vine, uuid-utils, urllib3, uritemplate, tzdata, typing-extensions, tenacity, sympy, sqlparse, six, setuptools, safetensors, rpds-py, regex, redis, PyYAML, python-dotenv, pyparsing, pycryptodome, pycparser, propcache, pillow, packaging, ormsgpack, orjson, numpy, networkx, multidict, MarkupSafe, llvmlite, kiwisolver, jsonpointer, inflection, idna, h11, fsspec, frozenlist, fonttools, filelock, einops, cycler, colorama, coincurve, charset_normalizer, certifi, billiard, attrs, asgiref, annotated-types, aiohappyeyeballs, yarl, tzlocal, typing-inspection, tqdm, requests, referencing, python-dateutil, pydantic-core, prompt-toolkit, numba, langchain-protocol, jsonpatch, jinja2, httpcore, django, contourpy, click, cffi, anyio, amqp, aiosignal, torch, requests-toolbelt, pydantic, pycares, pandas, matplotlib, kombu, jsonschema-specifications, huggingface_hub, httpx, djangorestframework, dateparser, cryptography, click-repl, click-plugins, click-didyoumean, aiohttp, python-binance, pandas-ta, langsmith, langgraph-sdk, jsonschema, celery, aiodns, langchain-core, drf-spectacular, ccxt, langgraph-checkpoint, langgraph-prebuilt, langgraph
 ```
+
+### TEST OBJECT
 
 ```json
 {
@@ -54,7 +70,7 @@ GEMINI_API_KEY = string
 
 <https://www.binance.com/en/support/faq/detail/360002502072>
 
-### API PACKAGE
+### API PACKAGES
 
 <https://python-binance.readthedocs.io/en/latest/>
 
@@ -62,43 +78,14 @@ GEMINI_API_KEY = string
 
 <https://github.com/sammchardy/python-binance/tree/master/examples>
 
+### PLAN PACKAGES
+
 <https://www.pandas-ta.dev/getting-started/installation/>
 
 <https://www.pandas-ta.dev/api/>
 
-<https://github.com/raydez/kronos-ai/blob/main/backend/>
-
-<https://github.com/thzll2001/Kronos-ai>
-
-<https://github.com/shiyu-coder/Kronos>
+<https://huggingface.co/NeoQuasar/Kronos-base>
 
 ### PROJECT INFO
 
 <https://docs.google.com/document/d/1gX6cKdLb4sdMJgOvAT85z0pJ4ZbtNm_yZyx9FnvUpsM/edit?usp=sharing>
-
----
-
-### 📊 Breakdown of the Data Structure
-
-The `listen_kline` function returns a `JSON` object containing two main sections: general event information (`e`, `E`, `s`) and a nested `k` object with the candlestick data itself. Inside the `k` object are the fields `t`, `T`, `s`, `i`, as well as important trading indicators `o`, `c`, `h`, `l`, `v`.
-
-* **General Event Fields:**
-  * `e` (event type): The type of event. The value `kline` confirms that this is candlestick data.
-  * `E` (event time): The event time in milliseconds (`Unix Timestamp`).
-  * `s` (symbol): The trading pair. In your case, `BNBBTC`.
-* **Candlestick Data (`k` object):**
-  * `t` (kline start time): The start time of the candlestick in milliseconds.
-  * `T` (kline close time): The close time of the candlestick.
-  * `s` (symbol): Duplicates the trading pair for convenience.
-  * `i` (interval): The candlestick interval. `1m` means one minute.
-  * `o` (open price): Opening price (`0.00831400`).
-  * `c` (close price): Closing price. In your example, it is equal to the opening price.
-  * `h` (high price): Maximum price for the period.
-  * `l` (low price): Minimum price for the period.
-  * `v` (base asset volume): Trading volume in the base asset (BNB).
-  * `n` (number of trades): The number of trades executed.
-  * `x` (is closed): The status of the candlestick. `True` means it is closed (final).
-  * `q` (quote asset volume): Trading volume in the quote asset (BTC).
-  * `V` (taker buy base volume): Volume of market buy orders in the base asset.
-  * `Q` (taker buy quote volume): Volume of market buy orders in the quote asset.
-  * `B` (ignore): An ignored parameter.

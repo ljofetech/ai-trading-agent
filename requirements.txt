@@ -1,23 +1,41 @@
 # Required version of Python: ==3.12.0
 
-# Main framework
-django==5.2.9
+### Web Framework & API
 
-# API development
+django==5.2.9
 djangorestframework==3.16.1
 drf-spectacular==0.29.0
 
-# System utilities and configuration
+### Task Queue & Background Processing
+
 celery==5.6.2
 redis==7.2.1
+
+### Configuration & Utilities
+
 python-dotenv==1.1.1
 requests==2.32.5
+tqdm==4.67.1
 
-# AI
+### AI / LLM / Workflow Orchestration
+
 langgraph==1.0.10
+torch>=2.0.0
+einops==0.8.1
+huggingface_hub==0.33.1
+safetensors==0.6.2
 
-# Binance API client and technical analysis library
-python-binance==1.0.36
+### Data Analysis & Technical Indicators
+
 pandas==3.0.2
+# numpy==2.4.4
 pandas-ta==0.4.71b0
+
+### Trading & Market APIs
+
+python-binance==1.0.36
 ccxt==4.5.48
+
+### Visualization
+
+matplotlib==3.9.3

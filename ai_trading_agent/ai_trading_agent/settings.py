@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     # Apps ↓
     "binance_socket",
-    "conversation",
+    "router",
     "llmcouncil",
     "pandas_ta_socket",
 ]

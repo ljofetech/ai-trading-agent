@@ -9,7 +9,7 @@ class LLMCouncil:
     @staticmethod
     def run(state: dict):
         # market_data = MarketAgent.analyze(state)
-        return "market_data"
+        return "under maintenance"
         # risk_data = RiskAgent.evaluate(market_data)
         # execution_plan = ExecutionAgent.plan(
         #     state,
