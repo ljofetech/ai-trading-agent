@@ -28,6 +28,23 @@ AI_API_KEY = string
 // a `.env` file for a project that involve storing sensitive information related to the Binance API.
 BINANCE_API_KEY = string
 BINANCE_API_SECRET = string
+
+// `TIME_ZONE = "Asia/Nicosia"` and `USE_TZ = True` are settings in a configuration file (`.env` file)
+// for a project.
+TIME_ZONE = "Asia/Nicosia"
+USE_TZ = True
+
+// The values `T=0.5`, `top_p=0.8`, and `sample_count=1` are configuration settings used in the context
+// of forecasting scenarios within the Kronos system. Here's what each of these settings represents:
+T=0.5
+top_p=0.8
+sample_count=1
+
+// The code snippet `symbol="BTCUSDT" interval="15m" forecast_hours=5` is defining parameters related
+// to trading and forecasting within the project. Here's what each parameter represents:
+symbol="BTCUSDT"
+interval="15m"
+forecast_hours=5
 ```
 
 ## Requirments
@@ -55,6 +72,43 @@ BINANCE_API_SECRET = string
 // contains a list of all the Python packages and libraries required for the project to function
 // properly.
 Installing collected packages: pytz, mpmath, zstandard, xxhash, websockets, wcwidth, vine, uuid-utils, urllib3, uritemplate, tzdata, typing-extensions, tenacity, sympy, sqlparse, six, setuptools, safetensors, rpds-py, regex, redis, PyYAML, python-dotenv, pyparsing, pycryptodome, pycparser, propcache, pillow, packaging, ormsgpack, orjson, numpy, networkx, multidict, MarkupSafe, llvmlite, kiwisolver, jsonpointer, inflection, idna, h11, fsspec, frozenlist, fonttools, filelock, einops, cycler, colorama, coincurve, charset_normalizer, certifi, billiard, attrs, asgiref, annotated-types, aiohappyeyeballs, yarl, tzlocal, typing-inspection, tqdm, requests, referencing, python-dateutil, pydantic-core, prompt-toolkit, numba, langchain-protocol, jsonpatch, jinja2, httpcore, django, contourpy, click, cffi, anyio, amqp, aiosignal, torch, requests-toolbelt, pydantic, pycares, pandas, matplotlib, kombu, jsonschema-specifications, huggingface_hub, httpx, djangorestframework, dateparser, cryptography, click-repl, click-plugins, click-didyoumean, aiohttp, python-binance, pandas-ta, langsmith, langgraph-sdk, jsonschema, celery, aiodns, langchain-core, drf-spectacular, ccxt, langgraph-checkpoint, langgraph-prebuilt, langgraph
+```
+
+### Kronos
+
+```json
+# Stable forecast (minimum noise)
+T=0.5,  # Low temperature → almost deterministic forecast (less noise)
+top_p=0.8,  # We take only the most probable options → smoothed result
+sample_count=1,  # One scenario → simple, without variability
+
+# Balanced (default recommended)
+T=0.8, # Balance between stability and variability
+top_p=0.9, # Likely scenarios are taken into account, but not only the most severe ones
+sample_count=3, # Several scenarios → can be averaged
+
+# Aggressive / “market chaos”
+T=1.2, # High temperature → more randomness
+top_p=0.95, # Almost the entire spectrum of probabilities → chaos
+sample_count=5, # Several scenarios → different possible futures
+
+# Uncertainty Analysis (very useful)
+T=0.9, # a little randomness
+top_p=0.9, # normal probability range
+sample_count=10, # many scenarios
+
+# Short accurate forecast (scalping)
+T=0.6, # less noise → more precisely short-term
+top_p=0.85, # focus on probable movements
+sample_count=1,
+
+# | Parameter      | What it does                         | Lower value                 | Higher value                |
+# | -------------- | ------------------------------------ | --------------------------- | --------------------------- |
+# | `T`            | randomness (temperature)             | more stable, deterministic  | more chaotic, unpredictable |
+# | `top_p`        | probability range (nucleus sampling) | conservative, safer choices | more diverse possibilities  |
+# | `sample_count` | number of scenarios                  | single forecast path        | multiple possible futures   |
+# | `pred_len`     | forecast length                      | short-term prediction       | long-term prediction        |
+
 ```
 
 ### TEST OBJECT

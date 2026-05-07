@@ -28,7 +28,6 @@ safetensors==0.6.2
 ### Data Analysis & Technical Indicators
 
 pandas==3.0.2
-# numpy==2.4.4
 pandas-ta==0.4.71b0
 
 ### Trading & Market APIs

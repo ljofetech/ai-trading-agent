@@ -47,9 +47,9 @@ INSTALLED_APPS = [
     "drf_spectacular",
     # Apps ↓
     "binance_socket",
-    "router",
     "llmcouncil",
     "pandas_ta_socket",
+    "router",
 ]
 
 MIDDLEWARE = [
@@ -120,11 +120,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = os.getenv("TIME_ZONE")
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = os.getenv("USE_TZ")
 
 
 # Static files (CSS, JavaScript, Images)
@@ -142,7 +142,7 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "-",
-    "DESCRIPTION": "-",
+    "TITLE": "AI Trading Agent API",
+    "DESCRIPTION": "API for an AI-powered trading agent that analyzes market data, generates trading signals, executes strategies, and manages portfolio risk in real time.",
     "VERSION": "1.0.0",
 }

@@ -174,8 +174,8 @@ class CryptoAnalyzer:
 #     # Create an instance of the analyzer for BTC/USDT, one day of 15-minute candles
 #     analyzer = CryptoAnalyzer(
 #         symbol="BTCUSDT",
-#         start_date="2026-04-20",
-#         end_date="2026-04-21",
+#         start_date="2026-05-05",
+#         end_date="2026-05-06",
 #         timeframe="15m",
 #         indicators=["rsi", "bbands", "ema"],
 #     )
