@@ -140,6 +140,8 @@ sample_count=1,
 
 <https://huggingface.co/NeoQuasar/Kronos-base>
 
+<https://openrouter.ai/>
+
 ### PROJECT INFO
 
 <https://docs.google.com/document/d/1gX6cKdLb4sdMJgOvAT85z0pJ4ZbtNm_yZyx9FnvUpsM/edit?usp=sharing>
