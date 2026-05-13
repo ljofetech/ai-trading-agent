@@ -1,7 +1,5 @@
 import os
-import asyncio
 
-from datetime import datetime
 from dotenv import load_dotenv
 
 # Load environment variables from .env file (API keys)
@@ -14,7 +12,7 @@ BINANCE_API_KEY = os.getenv("BINANCE_API_KEY")
 BINANCE_API_SECRET = os.getenv("BINANCE_API_SECRET")
 
 
-async def get_historical_klines_range(
+def get_historical_klines_range(
     symbol: str, interval: str, start_date: str, end_date: str
 ):
     """
@@ -33,13 +31,13 @@ async def get_historical_klines_range(
     # Initialize Binance API client (live futures, not testnet)
     binance = BinanceAPI(BINANCE_API_KEY, BINANCE_API_SECRET, testnet=False)
     # Establish the connection to Binance REST API
-    await binance.connect()
+    binance.connect()
 
     try:
         # Request historical klines for the specified date range
         # This endpoint handles pagination automatically and returns all candles
         # between start_date and end_date.
-        klines = await binance.client.futures_historical_klines(
+        klines = binance.client.futures_historical_klines(
             symbol=symbol,
             interval=interval,
             start_str=start_date,  # Flexible date string accepted by Binance
@@ -48,7 +46,7 @@ async def get_historical_klines_range(
         return klines
     finally:
         # Ensure the client connection is closed even if an error occurs
-        await binance.disconnect()
+        binance.disconnect()
 
 
 # async def main():

@@ -1,4 +1,5 @@
-# from .agents.market_agent import MarketAgent
+from .agents.market_agent import MarketAgent
+
 # from .agents.risk_agent import RiskAgent
 # from .agents.execution_agent import ExecutionAgent
 # from .agents.supervisor_agent import SupervisorAgent
@@ -8,8 +9,8 @@ class LLMCouncil:
 
     @staticmethod
     def run(state: dict):
-        # market_data = MarketAgent.analyze(state)
-        return "under maintenance"
+        market_data = MarketAgent.analyze(state)
+        return market_data
         # risk_data = RiskAgent.evaluate(market_data)
         # execution_plan = ExecutionAgent.plan(
         #     state,

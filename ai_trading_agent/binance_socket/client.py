@@ -1,4 +1,5 @@
-from binance import AsyncClient, BinanceSocketManager
+from binance import BinanceSocketManager
+from binance.client import Client
 
 
 class BinanceAPI:
@@ -22,11 +23,11 @@ class BinanceAPI:
         self.testnet = testnet
 
         # Will be set after connect() is called
-        self.client: AsyncClient | None = None
+        self.client: Client | None = None
         # Will be set after connect() is called; used to create WebSocket streams
         self.socket_manager: BinanceSocketManager | None = None
 
-    async def connect(self) -> "BinanceAPI":
+    def connect(self) -> "BinanceAPI":
         """
         Asynchronously create the AsyncClient and initialize the socket manager.
 
@@ -36,7 +37,7 @@ class BinanceAPI:
             Self (the BinanceAPI instance) to allow method chaining.
         """
         # Create the asynchronous REST client
-        self.client = await AsyncClient.create(
+        self.client = Client(
             self.api_key,
             self.api_secret,
             testnet=self.testnet,  # Routes to either live or testnet endpoints
@@ -45,7 +46,7 @@ class BinanceAPI:
         self.socket_manager = BinanceSocketManager(self.client)
         return self
 
-    async def disconnect(self) -> None:
+    def disconnect(self) -> None:
         """
         Cleanly close the underlying REST client connection and reset attributes.
 
@@ -53,7 +54,7 @@ class BinanceAPI:
         """
         if self.client:
             # Close the connection to prevent resource leaks
-            await self.client.close_connection()
+            self.client.close_connection()
             # Reset to None to indicate the client is no longer available
             self.client = None
             self.socket_manager = None
