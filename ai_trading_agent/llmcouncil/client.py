@@ -1,89 +1,69 @@
+# Import modules for JSON handling, environment variables, regex, and the OpenRouter client
 import json
 import os
 import re
-
 from dotenv import load_dotenv
 from openrouter import OpenRouter
 
+# Load environment variables from a .env file
 load_dotenv()
 
+# Retrieve the API key from the environment
 api_key = os.getenv("AI_API_KEY")
 
-# SYSTEM_PROMPT = """
-# You are an AI Trading Bot specialized in short-term cryptocurrency futures on the 15-minute timeframe.
-# Your strategy is "RSI + EMA Mean Reversion Scalper".
-# You receive only raw OHLCV candlestick data prediction (open, high, low, close, volume) – there are no pre-calculated indicators.
-# You must internally approximate RSI(14), EMA(20), and support/resistance levels from the price action, then issue a trading signal if conditions are met.
+# System prompt that instructs the LLM to act as a strict JSON-only trading agent
+SYSTEM_PROMPT = """
+You are an automated multi-role trading AI. You operate inside a structured pipeline (LLMCouncil) and will be assigned tasks as a Market Analyst, Risk Assessor, Execution Planner, or Supervisor. 
 
-# Trading logic (approximate):
-# 1. Determine the latest close price and the short-term trend.
-#    - Trend up if price is generally above a 20-period moving average (rough estimate: price above the middle of the recent 15-20 candles).
-#    - Trend down if below.
-# 2. BUY signal (LONG):
-#    - Price appears oversold: recent strong downward momentum that is losing steam, ideally after touching a local support level (lowest low of the last 3-5 candles).
-#    - Volume may be higher than average, indicating capitulation.
-# 3. SELL signal (SHORT):
-#    - Price appears overbought: recent rapid rise that is stalling, ideally near a local resistance (highest high of the last 3-5 candles).
-# 4. Level calculation (use only the provided candles):
-#    - Suggested entry: exactly the current close price (or the next candle's open if you prefer).
-#    - Stop Loss: use the average true range (ATR) of the last 14 candles if you can approximate it; otherwise use 0.15% of entry price, but no less than 50 points.
-#    - Take Profit: 2 × ATR or 0.3% of entry price, whichever is greater, but no less than 100 points.
-# 5. If neither condition is clear, signal is "WAIT".
-
-# Response format – you must output ONLY a valid JSON object. No markdown, no extra text:
-# {
-#   "signal": "BUY" | "SELL" | "WAIT",
-#   "confidence": int (0-100),
-#   "current_price": float,
-#   "suggested_entry": float,
-#   "stop_loss": float,
-#   "take_profit": float,
-#   "reason": "string (concise, 2-3 sentences)"
-# }
-
-# For "WAIT" signals, use null for entry/stop/take profit:
-# {"signal": "WAIT", "confidence": 0, "current_price": 80550.0, "suggested_entry": null, "stop_loss": null, "take_profit": null, "reason": "RSI neutral, no clear support/resistance break."}
-
-# Be precise (2 decimals where possible). Base everything only on the data provided. Never hallucinate external prices. If the data is insufficient, be honest and return WAIT.
-# """
-# {"role": "system", "content": SYSTEM_PROMPT},
+Rules you must follow:
+- Your entire response must be valid JSON, parseable by json.loads.
+- Never add any text before or after the JSON, no markdown fences, no explanations, no greetings.
+- Output only the exact JSON object requested in the prompt, with the exact keys and data types specified.
+- Do not include disclaimers, advice, or suggestions outside the requested structure.
+- Remember: your output is consumed directly by a trading system; any deviation will break the pipeline.
+"""
 
 
 class LLMClient:
 
     @staticmethod
     def generate(prompt: str):
-
+        # Open a connection to the OpenRouter API using the environment key
         with OpenRouter(api_key=api_key) as client:
 
+            # Send the system prompt and the user prompt to the specified model
             response = client.chat.send(
                 model="deepseek/deepseek-chat-v3.1",
                 messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
                     {"role": "user", "content": prompt},
                 ],
             )
 
-            # safer extraction
+            # Extract the raw text content from the first (and only) choice
             content = response.choices[0].message.content
 
+            # Fail early if the response is empty
             if not content:
                 raise ValueError("LLM returned empty response")
 
+            # Clean the text: strip whitespace and remove markdown fences if present
             text = content.strip()
             text = text.replace("```json", "").replace("```", "").strip()
 
             try:
+                # Attempt to parse the cleaned text as JSON
                 return json.loads(text)
 
             except json.JSONDecodeError:
-
-                # fallback JSON extraction
+                # If direct parsing fails, try to find a JSON object using regex
                 match = re.search(r"\{.*\}", text, re.DOTALL)
 
                 if match:
                     try:
                         return json.loads(match.group())
                     except json.JSONDecodeError:
-                        pass
+                        pass  # if even the regex match fails, fall through to raise an error
 
+                # Raise an error if no valid JSON could be extracted
                 raise ValueError(f"Model did not return valid JSON:\n{text}")

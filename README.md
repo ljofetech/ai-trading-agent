@@ -116,7 +116,7 @@ sample_count=1,
 ```json
 {
 "conversation_id": "0",
-"message": "I want to trade BTC for USDT using a 15m timeframe, starting from 2026-05-13 and ending at 2026-05-14"
+"message": "I want to trade BTC for USDT using a 15m timeframe, starting from 2026-05-15 and ending at 2026-05-16"
 }
 ```
 

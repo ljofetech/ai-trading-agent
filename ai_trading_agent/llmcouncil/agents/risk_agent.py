@@ -1,84 +1,59 @@
-# from llmcouncil.client import LLMClient
+import json  # For serializing market data to JSON strings
+from llmcouncil.client import LLMClient  # LLM client to perform risk analysis
 
 
-# class RiskAgent:
+class RiskAgent:
 
-#     @staticmethod
-#     def evaluate(market_data: dict):
-#         analysis = LLMClient.generate(
-#             f"""
-#                 You are a professional risk manager for Trend Following + ATR strategy.
-                
-#                 Analyze this market data and calculate comprehensive risk metrics.
-#                 Use your understanding of quantitative risk management and crypto markets.
+    @staticmethod
+    def evaluate(market_data: dict):
+        print("\n[RiskAgent] Evaluating risk based on market analysis...")
+        # Extract historical candles and prediction data from the market analysis output
+        history_data = market_data.get("history", [])
+        prediction_data = market_data.get("prediction", [])
 
-#                 MARKET DATA:
-#                 {market_data}
+        # If history is too long, keep only the last 200 candles to stay within token limits
+        if len(history_data) > 200:
+            history_data = history_data[-200:]
 
-#                 Calculate the following risk metrics using YOUR OWN REASONING:
-                
-#                 1. RISK SCORE (0-100):
-#                    - 0-30: Low risk - ideal for entry
-#                    - 31-60: Medium risk - careful entry
-#                    - 61-100: High risk - avoid or tiny position
-                   
-#                 2. CONFIDENCE SCORE (0-100):
-#                    How confident are you in this risk assessment?
-                   
-#                 3. RISK LEVEL: "low" | "medium" | "high"
-                
-#                 4. POSITION SIZING (percent of portfolio):
-#                    Based on ATR, trend strength, and your risk assessment
-                   
-#                 5. STOP LOSS MULTIPLIER (ATR multiplier):
-#                    - 1.0-1.5: Tight stop (low volatility)
-#                    - 1.5-2.5: Standard stop (normal volatility)
-#                    - 2.5-4.0: Wide stop (high volatility, strong trend)
-                   
-#                 6. TAKE PROFIT MULTIPLIERS (ATR multipliers):
-#                    Suggest 3 take profit levels for trend following
-                   
-#                 7. RISK-REWARD RATIO:
-#                    Calculate minimum and expected R:R
-                   
-#                 8. MAX DRAWDOWN ESTIMATE:
-#                    Expected maximum drawdown for this trade
-                   
-#                 9. VOLATILITY ADJUSTMENT:
-#                    Recommended adjustment to position size based on volatility
-                   
-#                 10. LIQUIDITY RISK:
-#                     Assessment of slippage and execution risk
-                   
-#                 11. CORRELATION RISK:
-#                     If this is a stablecoin pair or correlated with BTC/ETH
-                    
-#                 12. FINAL RECOMMENDATION:
-#                     "ENTER" | "AVOID" | "REDUCE_SIZE" | "WAIT"
+        # Convert both datasets to JSON strings for inclusion in the prompt
+        history_json = json.dumps(history_data, default=str)
+        prediction_json = json.dumps(prediction_data, default=str)
+        print(
+            f"History data (last {len(history_data)} candles) and predictions prepared for risk evaluation."
+        )
+        # Send a structured prompt to the LLM asking for a comprehensive risk evaluation
+        analysis = LLMClient.generate(f"""
+            You are a senior risk analyst for crypto futures trading.
+            Analyze the provided historical OHLCV candles and price predictions for the next forecast horizon.
 
-#                 Return ONLY valid JSON with your professional risk assessment:
-#                 {{
-#                     "risk_score": number,
-#                     "confidence": number,
-#                     "risk_level": "low | medium | high",
-#                     "recommended_position_size_percent": number,
-#                     "stop_loss_atr_multiplier": number,
-#                     "take_profit_multipliers": [number, number, number],
-#                     "risk_reward_ratio": {{
-#                         "minimum": number,
-#                         "expected": number
-#                     }},
-#                     "max_drawdown_estimate_percent": number,
-#                     "volatility_adjustment_factor": number,
-#                     "liquidity_risk": "low | medium | high",
-#                     "liquidity_risk_reasoning": "text",
-#                     "correlation_risk": "low | medium | high",
-#                     "final_recommendation": "ENTER | AVOID | REDUCE_SIZE | WAIT",
-#                     "reasoning": "detailed explanation of your risk assessment",
-#                     "warnings": ["warning1", "warning2"],
-#                     "optimal_entry_conditions": ["condition1", "condition2"]
-#                 }}
-#             """
-#         )
+            Historical candles (last {len(history_data)} periods):
+            {history_json}
 
-#         return analysis
+            Price predictions (timestamp and forecasted values, possibly with confidence intervals):
+            {prediction_json}
+
+            Your task:
+            1. Calculate current market volatility (e.g., ATR based on historical data or predicted range).
+            2. Evaluate trend strength and potential reversals.
+            3. Assess the risk of the trade: consider maximum adverse excursion, forecast uncertainty, and liquidity.
+            4. Provide a risk score from 1 (very safe) to 10 (extremely risky).
+            5. Suggest a maximum leverage and a safe stop-loss distance (in percentage from entry).
+            6. Indicate if trading is recommended at all (allowed = true/false).
+
+            Return ONLY valid JSON with the following keys:
+            {{
+                "risk_score": number,
+                "volatility_pct": number (annualized or period-based, e.g. recent price range as % of price),
+                "max_leverage": integer (1-125, default 5 if low risk, 1 if high risk),
+                "stop_loss_pct": number (e.g. 1.5 meaning 1.5%),
+                "take_profit_pct": number (e.g. 3.0),
+                "trading_allowed": boolean,
+                "warnings": [list of strings]
+            }}
+
+            Respond ONLY with the JSON. No additional text.
+            """)
+        print("Risk evaluation completed with the following analysis:")
+        print(analysis)
+        # Return the LLM's risk evaluation (expected to be a JSON object)
+        return analysis
